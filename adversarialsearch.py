@@ -6,8 +6,38 @@ from adversarialsearchproblem import (
     State as GameState,
 )
 
+def minimax_simulation(asp: AdversarialSearchProblem[GameState, Action], isBot) -> Action:
+    if (asp.is_terminal_state(asp.get_start_state())):
+        if asp.evaluate_terminal(asp.get_start_state())[0]>0:
+            return -100
+        elif asp.evaluate_terminal(asp.get_start_state())[1]>0:
+            return 100
+        else:
+            return 0
+    if (isBot()):
+        bestvalue = 800
+        for i in asp.get_available_actions(asp.get_start_state()):
+            score=minimax_simulation(asp.transition(asp, i), False)
+            bestvalue = min(score, bestvalue)
+        return bestvalue  
+    else:
+        bestvalue = -800
+        for i in asp.get_available_actions(asp.get_start_state()):
+            score=minimax_simulation(asp.transition(asp, i), True)
+            bestvalue = max(score, bestvalue)
+        return bestvalue  
 
 def minimax(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
+    #minimax_simulation(asp, )
+    bestScore = 800
+    bestMove = 0
+    for key in asp.get_available_actions(asp.get_start_state()):
+        score = minimax_simulation(asp.transition(asp, key),False)
+        if (score < bestScore):
+            bestScore = score
+            bestMove = key
+    return key
+    
     """
     Implement the minimax algorithm on ASPs, assuming that the given game is
     both 2-player and constant-sum.
@@ -17,28 +47,88 @@ def minimax(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
     Output:
         an action (an element of asp.get_available_actions(asp.get_start_state()))
     """
-    ...
+   
+def alpha_beta_simulation(asp: AdversarialSearchProblem[GameState, Action], alpha, beta,isBot) -> Action:
+    if (asp.is_terminal_state(asp.get_start_state())):
+        if asp.evaluate_terminal(asp.get_start_state())[0]>0:
+            return -100
+        elif asp.evaluate_terminal(asp.get_start_state())[1]>0:
+            return 100
+        else:
+            return 0
+    if (isBot()):
+        bestvalue = 800
+        for i in asp.get_available_actions(asp.get_start_state()):
+            score=alpha_beta_simulation(asp.transition(asp, i), alpha, beta, False)
+            bestvalue = min(score, bestvalue)
+            alpha = min(alpha, score)
+            if beta>alpha:
+                break
+        return bestvalue  
+    else:
+        bestvalue = -800
+        for i in asp.get_available_actions(asp.get_start_state()):
+            score=minimax_simulation(asp.transition(asp, i), True)
+            bestvalue = max(score, bestvalue)
+            beta = max(beta<score)
+            if beta>alpha:
+                break
+        return bestvalue  
 
 
 def alpha_beta(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
-    """
-    Implement the alpha-beta pruning algorithm on ASPs,
-    assuming that the given game is both 2-player and constant-sum.
+    bestScore = 800
+    bestMove = 0
+    print(asp.transition(asp, (1,0)))
+    for key in asp.get_available_actions(asp.get_start_state()):
+        score = alpha_beta_simulation(asp.transition(asp, key),False)
+        if (score < bestScore):
+            bestScore = score
+            bestMove = key
+    return key
 
-    Input:
-        asp - an AdversarialSearchProblem
-    Output:
-        an action(an element of asp.get_available_actions(asp.get_start_state()))
-    """
-    ...
-
-
+def alpha_beta_cutoff_simulation(asp: AdversarialSearchProblem[GameState, Action], alpha, beta,isBot, heuristic_func: Callable[[GameState], float], turn) -> Action:
+    if (asp.is_terminal_state(asp.get_start_state())):
+        if asp.evaluate_terminal(asp.get_start_state())[0]>0:
+            return -100
+        elif asp.evaluate_terminal(asp.get_start_state())[1]>0:
+            return 100
+        else:
+            return 0
+    if (isBot()):
+        bestvalue = 800
+        for i in asp.get_available_actions(asp.get_start_state()):
+            score=alpha_beta_simulation(asp.transition(asp, i), alpha, beta, False, heuristic_func, turn+1)+heuristic_func(turn)
+            bestvalue = min(score, bestvalue)
+            alpha = min(alpha, score)
+            if beta>alpha:
+                break
+        return bestvalue  
+    else:
+        bestvalue = -800
+        for i in asp.get_available_actions(asp.get_start_state()):
+            score=minimax_simulation(asp.transition(asp, i), True)
+            bestvalue = max(score, bestvalue)
+            beta = max(beta<score)
+            if beta>alpha:
+                break
+        return bestvalue  
 def alpha_beta_cutoff(
     asp: AdversarialSearchProblem[GameState, Action],
     cutoff_ply: int,
     # See AdversarialSearchProblem:heuristic_func
     heuristic_func: Callable[[GameState], float],
 ) -> Action:
+    bestScore = 800
+    bestMove = 0
+    print(asp.transition(asp, (1,0)))
+    for key in asp.get_available_actions(asp.get_start_state()):
+        score = alpha_beta_simulation(asp.transition(asp, key),False, 0, 10000, False, heuristic_func, 1)
+        if (score < bestScore):
+            bestScore = score
+            bestMove = key
+    return key
+
     """
     This function should:
     - search through the asp using alpha-beta pruning

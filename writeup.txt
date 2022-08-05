@@ -1,0 +1,31 @@
+Introduction. What is the problem or task you are trying to solve? 
+What methods are you using to solve them? 
+(This may be answered by the assignment itself, but write it in your own words.)
+
+I am trying to create algorithms to create an agent that plays Tic-tac-toe with the user optimally. 
+Based on the instructions, I were to use three algoirthms: minimax, alpha-beta, and alpha-beta cutoff
+
+Methods. What implementation choices did you make? How did you decide on those choices?
+How did you evaluate or test your system?
+
+I decided to write a seperate function for each one of them, since I did not want to mess with the formats
+of the given functions, but I want to write it with recursion and add more parameters to the function. Without
+using heuristics for minimax and alpha-beta, the only way the measure how good the move is is by seeing
+if following this step will result in a winning, tie, or losing situation if both players playing optimally.
+For the bot, if the other player would ultimately win, the score for this move would be a nagative number (-100), if
+they end up tying the score would be 0, and if the bot won the score for this move would be a positive number (100).
+The bot wants to keep the score as high as possible, and the player's optimal way is to minimize the number. By recursively
+going through each of the possible moves, and moving back and before between maximizing and minimizing, the agent
+develops an optimal plan to play against the player. However, traversing through all possibilities is unnecessary.
+For example, if the minimizing already traversed through a path and got a current score of 100 (alpha value), and the next
+one has a 200 (beta value), then you can break out of loop. If we add heuristics into the alpha-beta pruning algorithm, 
+it gives a more accurate result, so it can more vividly showcase the differences between nodes, allowing us to cutoff
+more of them by alpha-beta-pruning since the difference is more noticeable. 
+
+Results. Did your system work? How well? Provide tables / numerical results if appropriate.
+
+Currently, there are syntax bugs in the program, therefore the program cannot run, but the general idea and structure is fine. 
+
+Discussion. Based on your results, were your methods and choices appropriate for the task? 
+What would you do differently next time? Or if you had more time? 
+Are there any ethical implications of your system that others should be aware of?
